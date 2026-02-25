@@ -103,6 +103,87 @@ function showPopup(title, message, variant = 'error') {
     });
 }
 
+// ==================== CONFIRM DIALOG ====================
+function showConfirm(title, message, onConfirm) {
+    if (activePopupEl) {
+        activePopupEl.remove();
+        activePopupEl = null;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 opacity-0 transition-opacity duration-150';
+
+    const modal = document.createElement('div');
+    modal.className = 'w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-red-200 dark:border-red-900/40 overflow-hidden transform scale-95 opacity-0 transition-all duration-150';
+
+    const header = document.createElement('div');
+    header.className = 'px-5 py-4 border-b border-gray-200 dark:border-gray-700';
+
+    const titleEl = document.createElement('h3');
+    titleEl.className = 'text-base font-semibold text-red-600 dark:text-red-400';
+    titleEl.textContent = title;
+
+    const body = document.createElement('div');
+    body.className = 'px-5 py-4 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line';
+    body.textContent = message;
+
+    const footer = document.createElement('div');
+    footer.className = 'px-5 py-4 bg-gray-50 dark:bg-gray-900/30 flex justify-end gap-3';
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.className = 'px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium focus:outline-none';
+    cancelBtn.textContent = 'Cancel';
+
+    const confirmBtn = document.createElement('button');
+    confirmBtn.type = 'button';
+    confirmBtn.className = 'px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium focus:outline-none focus:ring-2 focus:ring-red-500';
+    confirmBtn.textContent = 'Delete';
+
+    function closeConfirm() {
+        overlay.classList.remove('opacity-100');
+        modal.classList.remove('opacity-100', 'scale-100');
+        modal.classList.add('opacity-0', 'scale-95');
+        setTimeout(function() {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            if (activePopupEl === overlay) activePopupEl = null;
+            document.removeEventListener('keydown', onKeyDown);
+        }, 160);
+    }
+
+    function onKeyDown(e) {
+        if (e.key === 'Escape') closeConfirm();
+    }
+
+    cancelBtn.addEventListener('click', closeConfirm);
+    confirmBtn.addEventListener('click', function() {
+        closeConfirm();
+        onConfirm();
+    });
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) closeConfirm();
+    });
+    document.addEventListener('keydown', onKeyDown);
+
+    header.appendChild(titleEl);
+    footer.appendChild(cancelBtn);
+    footer.appendChild(confirmBtn);
+    modal.appendChild(header);
+    modal.appendChild(body);
+    modal.appendChild(footer);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    activePopupEl = overlay;
+
+    requestAnimationFrame(function() {
+        overlay.classList.add('opacity-100');
+        modal.classList.remove('opacity-0', 'scale-95');
+        modal.classList.add('opacity-100', 'scale-100');
+        cancelBtn.focus();
+    });
+}
+
 // ==================== VALIDATION HELPERS ====================
 function normalizeSpaces(str) {
     return String(str || '').replace(/\s+/g, ' ').trim();
@@ -356,34 +437,71 @@ userForm.addEventListener('submit', function(e) {
     updateExpenseForm();
 });
 
+// Delete a user and all their associated expenses
+function deleteUser(userId) {
+    expenses = expenses.filter(function(exp) {
+        return exp.paidBy !== userId &&
+            !(Array.isArray(exp.participants) && exp.participants.includes(userId));
+    });
+    users = users.filter(function(u) { return u.id !== userId; });
+    saveData();
+    renderUsers();
+    updateExpenseForm();
+    renderExpenses();
+    renderBalances();
+}
+
 // Display all users
 function renderUsers() {
     userList.innerHTML = '';
-    
+
     if (users.length === 0) {
         noUsers.classList.remove('hidden');
         return;
     }
-    
+
     noUsers.classList.add('hidden');
-    
+
     users.forEach(function(user) {
         const li = document.createElement('li');
         li.className = 'flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg';
-        
-        // Get first letter for avatar
+
+        // Info section
         const initial = user.name.charAt(0).toUpperCase();
-        
-        li.innerHTML = `
-            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold">
+        const infoWrap = document.createElement('div');
+        infoWrap.className = 'flex items-center gap-3 flex-1 min-w-0';
+        infoWrap.innerHTML = `
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold flex-shrink-0">
                 ${initial}
             </div>
-            <div>
+            <div class="min-w-0">
                 <div class="font-medium text-gray-800 dark:text-white">${user.name}</div>
                 <div class="text-xs text-gray-400">${user.id}</div>
             </div>
         `;
-        
+
+        // Delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.title = 'Delete user';
+        deleteBtn.className = 'flex-shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors';
+        deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>`;
+
+        deleteBtn.addEventListener('click', function() {
+            const hasExpenses = expenses.some(function(exp) {
+                return exp.paidBy === user.id ||
+                    (Array.isArray(exp.participants) && exp.participants.includes(user.id));
+            });
+            const msg = hasExpenses
+                ? 'Deleting "' + user.name + '" will also remove all expenses involving them.\n\nThis cannot be undone.'
+                : 'Are you sure you want to delete "' + user.name + '"?\n\nThis cannot be undone.';
+            showConfirm('Delete User', msg, function() {
+                deleteUser(user.id);
+            });
+        });
+
+        li.appendChild(infoWrap);
+        li.appendChild(deleteBtn);
         userList.appendChild(li);
     });
 }
@@ -548,17 +666,25 @@ function getUserName(userId) {
     return user ? user.name : 'Unknown';
 }
 
+// Delete an expense by ID
+function deleteExpense(expenseId) {
+    expenses = expenses.filter(function(exp) { return exp.id !== expenseId; });
+    saveData();
+    renderExpenses();
+    renderBalances();
+}
+
 // Display all expenses
 function renderExpenses() {
     expensesList.innerHTML = '';
-    
+
     if (expenses.length === 0) {
         noExpenses.classList.remove('hidden');
         return;
     }
-    
+
     noExpenses.classList.add('hidden');
-    
+
     expenses.forEach(function(expense) {
         const div = document.createElement('div');
         div.className = 'p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 border-indigo-500';
@@ -578,7 +704,12 @@ function renderExpenses() {
         div.innerHTML = `
             <div class="flex justify-between items-start mb-2">
                 <h3 class="font-semibold text-gray-800 dark:text-white">${expense.description}</h3>
-                <span class="text-lg font-bold text-indigo-500">\u20B9${formatPaise(totalPaise)}</span>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <span class="text-lg font-bold text-indigo-500">\u20B9${formatPaise(totalPaise)}</span>
+                    <button type="button" class="expense-delete-btn p-1 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete expense">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                    </button>
+                </div>
             </div>
             <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                 <div class="flex justify-between">
@@ -596,6 +727,15 @@ function renderExpenses() {
             </div>
             <div class="text-xs text-gray-400 mt-2">${expense.id}</div>
         `;
+
+        // Attach delete handler (after innerHTML so the button exists)
+        div.querySelector('.expense-delete-btn').addEventListener('click', function() {
+            showConfirm(
+                'Delete Expense',
+                'Delete "' + expense.description + '"?\n\nThis will update all balances. This cannot be undone.',
+                function() { deleteExpense(expense.id); }
+            );
+        });
 
         expensesList.appendChild(div);
     });

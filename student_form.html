@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data Collection Form</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f0ebf8;
+        }
+        .form-container {
+            border-top: 10px solid #673ab7;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8">
+
+    <div class="max-w-2xl mx-auto space-y-4">
+        <!-- Form Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6 form-container">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Student Data Collection Form</h1>
+            <p class="text-gray-600 border-b border-gray-200 pb-4 mb-4">Please fill out this form with your current and accurate information.</p>
+            <p class="text-red-500 text-sm">* Indicates required question</p>
+        </div>
+
+        <form id="studentDataForm" class="space-y-4">
+            <!-- Full Name -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <label for="fullName" class="block text-gray-800 font-medium mb-4">Full Name <span class="text-red-500">*</span></label>
+                <input type="text" id="fullName" name="fullName" placeholder="Your answer" required
+                    class="w-full border-b border-gray-300 focus:border-purple-600 focus:outline-none transition-colors py-2">
+            </div>
+
+            <!-- Email Address -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <label for="email" class="block text-gray-800 font-medium mb-4">Email Address <span class="text-red-500">*</span></label>
+                <input type="email" id="email" name="email" placeholder="Your answer" required
+                    class="w-full border-b border-gray-300 focus:border-purple-600 focus:outline-none transition-colors py-2">
+            </div>
+
+            <!-- Roll Number -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <label for="rollNumber" class="block text-gray-800 font-medium mb-4">Roll Number <span class="text-red-500">*</span></label>
+                <input type="text" id="rollNumber" name="rollNumber" placeholder="Your answer" required
+                    class="w-full border-b border-gray-300 focus:border-purple-600 focus:outline-none transition-colors py-2">
+            </div>
+
+            <!-- Department -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <label for="department" class="block text-gray-800 font-medium mb-4">Department <span class="text-red-500">*</span></label>
+                <select id="department" name="department" required
+                    class="w-full border-b border-gray-300 focus:border-purple-600 focus:outline-none transition-colors py-2 bg-transparent">
+                    <option value="" disabled selected>Choose</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Civil">Civil</option>
+                    <option value="Information Technology">Information Technology</option>
+                </select>
+            </div>
+
+            <!-- Gender -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <span class="block text-gray-800 font-medium mb-4">Gender <span class="text-red-500">*</span></span>
+                <div class="space-y-3">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="radio" name="gender" value="Male" required class="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500">
+                        <span class="text-gray-700">Male</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="radio" name="gender" value="Female" class="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500">
+                        <span class="text-gray-700">Female</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="radio" name="gender" value="Other" class="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500">
+                        <span class="text-gray-700">Other</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <label for="dob" class="block text-gray-800 font-medium mb-4">Date of Birth <span class="text-red-500">*</span></label>
+                <input type="date" id="dob" name="dob" required
+                    class="w-full border-b border-gray-300 focus:border-purple-600 focus:outline-none transition-colors py-2">
+            </div>
+
+            <!-- Phone Number -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <label for="phone" class="block text-gray-800 font-medium mb-4">Phone Number <span class="text-red-500">*</span></label>
+                <input type="tel" id="phone" name="phone" placeholder="Your answer" required
+                    class="w-full border-b border-gray-300 focus:border-purple-600 focus:outline-none transition-colors py-2">
+            </div>
+
+            <!-- Address -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <label for="address" class="block text-gray-800 font-medium mb-4">Address <span class="text-red-500">*</span></label>
+                <textarea id="address" name="address" rows="3" placeholder="Your answer" required
+                    class="w-full border-b border-gray-300 focus:border-purple-600 focus:outline-none transition-colors py-2 resize-none"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-between items-center">
+                <button type="submit" class="bg-purple-700 hover:bg-purple-800 text-white font-medium px-6 py-2 rounded transition-colors shadow-sm focus:outline-none">
+                    Submit
+                </button>
+                <button type="reset" class="text-purple-700 font-medium hover:bg-purple-50 px-4 py-2 rounded transition-colors">
+                    Clear form
+                </button>
+            </div>
+        </form>
+
+        <footer class="text-xs text-gray-500 pt-4 pb-8">
+            <p>Never submit passwords through Google Forms.</p>
+            <p class="mt-2">This form was created for demonstration purposes.</p>
+        </footer>
+    </div>
+
+    <!-- Success Message Modal (Hidden by default) -->
+    <div id="successModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-sm w-full p-8 text-center shadow-xl">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Submission Successful!</h3>
+            <p class="text-gray-600 mb-6">Your student data has been recorded successfully.</p>
+            <button id="closeModal" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-medium py-2 rounded transition-colors">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <script src="form.js"></script>
+</body>
+</html>

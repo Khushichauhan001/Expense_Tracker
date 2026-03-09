@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Google Form Style</title>
+  <style>
+    :root {
+      --bg: #f0ebf8;
+      --card: #ffffff;
+      --text: #202124;
+      --muted: #5f6368;
+      --accent: #673ab7;
+      --border: #dadce0;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 24px 12px;
+    }
+
+    .form-wrap {
+      width: 100%;
+      max-width: 720px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      padding: 24px;
+    }
+
+    .title-card {
+      border-top: 10px solid var(--accent);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+      font-weight: 500;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .question {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      outline: none;
+      padding: 10px 2px;
+      font-size: 15px;
+      background: transparent;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .required {
+      color: #d93025;
+      margin-left: 4px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 18px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.95;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-wrap">
+    <div class="card title-card">
+      <h1>Event Registration Form</h1>
+      <p class="subtitle">Please fill out this form. Required questions are marked *</p>
+    </div>
+
+    <form class="card" id="googleStyleForm">
+      <div class="question">
+        <label for="name">Full Name <span class="required">*</span></label>
+        <input id="name" name="name" type="text" required />
+      </div>
+
+      <div class="question">
+        <label for="email">Email Address <span class="required">*</span></label>
+        <input id="email" name="email" type="email" required />
+      </div>
+
+      <div class="question">
+        <label for="phone">Phone Number</label>
+        <input id="phone" name="phone" type="tel" />
+      </div>
+
+      <div class="question">
+        <label for="role">Role <span class="required">*</span></label>
+        <select id="role" name="role" required>
+          <option value="">Choose one</option>
+          <option value="student">Student</option>
+          <option value="professional">Professional</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="question">
+        <label for="message">Why do you want to join?</label>
+        <textarea id="message" name="message" rows="4"></textarea>
+      </div>
+
+      <div class="actions">
+        <button type="submit">Submit</button>
+        <span class="note">Never submit passwords through forms.</span>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("googleStyleForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      alert("Form submitted successfully.");
+      this.reset();
+    });
+  </script>
+</body>
+</html>
